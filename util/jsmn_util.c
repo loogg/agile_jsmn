@@ -46,7 +46,7 @@ int JSMN_GetObjectItem(const char *js, jsmn_item_t *object, const char * const s
     return -1;
 }
 
-char *JSMN_GetItemValueStringOnlyMemory(char *js, jsmn_item_t *item)
+char *JSMN_GetValueString(char *js, jsmn_item_t *item)
 {
     jsmntok_t *t = NULL;
     if((js == NULL) || (item == NULL))
@@ -64,7 +64,7 @@ char *JSMN_GetItemValueStringOnlyMemory(char *js, jsmn_item_t *item)
     return js + t->start;
 }
 
-int JSMN_GetItemValueString(const char *js, jsmn_item_t *item, char *buf, int bufsz)
+int JSMN_GetValueStringBuffered(const char *js, jsmn_item_t *item, char *buf, int bufsz)
 {
     memset(buf, 0, bufsz);
     jsmntok_t *t = NULL;
