@@ -64,7 +64,7 @@ int main(void)
             goto _exit;
         }
 
-        LOG_I("get root array index:%d--->\"a\":%s", i, JSMN_GetItemValueStringOnlyMemory(js, &root_array_item_a));
+        LOG_I("get root array index:%d--->\"a\":%s", i, JSMN_GetValueString(js, &root_array_item_a));
 
         jsmn_item_t b_array;
         if(JSMN_GetObjectItem(js, &root_array_item, "b", &b_array) != 0)
@@ -92,7 +92,7 @@ int main(void)
                 goto _exit;
             }
 
-            LOG_I("get root array index:%d--->\"b\" array index:%d--->\"a\":%s", i, j, JSMN_GetItemValueStringOnlyMemory(js, &b_array_item_a));
+            LOG_I("get root array index:%d--->\"b\" array index:%d--->\"a\":%s", i, j, JSMN_GetValueString(js, &b_array_item_a));
         }
     }
 
