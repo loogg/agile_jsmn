@@ -16,27 +16,44 @@ void JSMN_ItemInit(jsmn_item_t *item, jsmntok_t *t, int index, int tokens_len)
 
 int JSMN_GetObjectItem(const char *js, jsmn_item_t *object, const char * const string, jsmn_item_t *item)
 {
-    int i;
-    jsmntok_t *t = NULL;
     if((js == NULL) || (object == NULL) || (string == NULL) || (item == NULL))
         return -1;
-    
-    if(object->t->type != JSMN_OBJECT)
-        return -1;
-    
-    if(object->left_num <= 0)
+
+    jsmn_item_t ob_item;
+
+    if(object->t->type == JSMN_OBJECT)
+    {
+        ob_item.t = object->t;
+        ob_item.index = object->index;
+        ob_item.left_num = object->left_num;
+    }
+    else
+    {
+        if((object->t->type != JSMN_STRING) || (object->t->size != 1) || (object->left_num) <= 0)
+            return -1;
+
+        jsmntok_t *t = object->t + 1;
+        if((t->type != JSMN_OBJECT) || (t->parent != object->index))
+            return -1;
+        
+        ob_item.t = object->t + 1;
+        ob_item.index = object->index + 1;
+        ob_item.left_num = object->left_num - 1;
+    }
+
+    if(ob_item.left_num <= 0)
         return -1;
 
-    for(i = 1; i <= object->left_num; i++)
+    for(int i = 1; i <= ob_item.left_num; i++)
     {
-        t = object->t + i;
-        if((t->type == JSMN_STRING) && (t->parent == object->index))
+        jsmntok_t *t = ob_item.t + i;
+        if((t->type == JSMN_STRING) && (t->parent == ob_item.index))
         {
             if(json_token_streq(js, t, string))
             {
                 item->t = t;
-                item->index = object->index + i;
-                item->left_num = object->left_num - i;
+                item->index = ob_item.index + i;
+                item->left_num = ob_item.left_num - i;
 
                 return 0;
             }
@@ -46,54 +63,70 @@ int JSMN_GetObjectItem(const char *js, jsmn_item_t *object, const char * const s
     return -1;
 }
 
+char *JSMN_GetString(char *js, jsmn_item_t *item)
+{
+    if((js == NULL) || (item == NULL))
+        return NULL;
+    
+    if((item->t->type != JSMN_STRING) && (item->t->type != JSMN_PRIMITIVE))
+        return NULL;
+    
+    js[item->t->end] = '\0';
+    return (js + item->t->start);
+}
+
+int JSMN_GetStringBuffered(const char *js, jsmn_item_t *item, char *buf, int bufsz)
+{
+    memset(buf, 0, bufsz);
+
+    if((js == NULL) || (item == NULL) || (buf == NULL) || (bufsz <= 0))
+        return -1;
+    
+    if((item->t->type != JSMN_STRING) && (item->t->type != JSMN_PRIMITIVE))
+        return -1;
+    
+    int len = item->t->end - item->t->start;
+    if(len >= bufsz)
+        len = bufsz - 1;
+    
+    memcpy(buf, js + item->t->start, len);
+    return len;
+}
+
 char *JSMN_GetValueString(char *js, jsmn_item_t *item)
 {
-    jsmntok_t *t = NULL;
     if((js == NULL) || (item == NULL))
         return NULL;
     
     if((item->t->type != JSMN_STRING) || (item->t->size != 1) || (item->left_num <= 0))
         return NULL;
     
-    t = item->t + 1;
-
-    if((t->type != JSMN_STRING) || (t->size != 0) || (t->parent != item->index))
-        return NULL;
+    jsmn_item_t val_item;
+    val_item.t = item->t + 1;
+    val_item.index = item->index + 1;
+    val_item.left_num = item->left_num - 1;
     
-    js[t->end] = '\0';
-    return js + t->start;
+    return JSMN_GetString(js, &val_item);
 }
 
 int JSMN_GetValueStringBuffered(const char *js, jsmn_item_t *item, char *buf, int bufsz)
 {
-    memset(buf, 0, bufsz);
-    jsmntok_t *t = NULL;
-    int len;
-
     if((js == NULL) || (item == NULL) || (buf == NULL) || (bufsz <= 0))
         return -1;
     
     if((item->t->type != JSMN_STRING) || (item->t->size != 1) || (item->left_num <= 0))
         return -1;
     
-    t = item->t + 1;
+    jsmn_item_t val_item;
+    val_item.t = item->t + 1;
+    val_item.index = item->index + 1;
+    val_item.left_num = item->left_num - 1;
 
-    if((t->type != JSMN_STRING) || (t->size != 0) || (t->parent != item->index))
-        return -1;
-    
-    len = t->end - t->start;
-
-    if(bufsz <= len)
-        return -1;
-    
-    memcpy(buf, js + t->start, len);
-    return 0;
+    return JSMN_GetStringBuffered(js, &val_item, buf, bufsz);
 }
 
 int JSMN_GetArraySize(jsmn_item_t *array)
 {
-    jsmntok_t *t = NULL;
-
     if(array == NULL)
         return -1;
     
@@ -103,8 +136,7 @@ int JSMN_GetArraySize(jsmn_item_t *array)
     if((array->t->type != JSMN_STRING) || (array->t->size != 1) || (array->left_num <= 0))
         return -1;
     
-    t = array->t + 1;
-
+    jsmntok_t *t = array->t + 1;
     if((t->type != JSMN_ARRAY) || (t->parent != array->index))
         return -1;
     
@@ -113,15 +145,14 @@ int JSMN_GetArraySize(jsmn_item_t *array)
 
 int JSMN_GetArrayItem(jsmn_item_t *array, int index, jsmn_item_t *item)
 {
-    jsmn_item_t array_tok;
-    int i;
-    jsmntok_t *t = NULL;
     if((array == NULL) || (index < 0) || (item == NULL))
         return -1;
 
     if(index >= JSMN_GetArraySize(array))
         return -1;
     
+    jsmn_item_t array_tok;
+
     if(array->t->type == JSMN_ARRAY)
     {
         array_tok.t = array->t;
@@ -135,9 +166,9 @@ int JSMN_GetArrayItem(jsmn_item_t *array, int index, jsmn_item_t *item)
         array_tok.left_num = array->left_num - 1;
     }
 
-    for (i = 1; i <= array_tok.left_num; i++)
+    for (int i = 1; i <= array_tok.left_num; i++)
     {
-        t = array_tok.t + i;
+        jsmntok_t *t = array_tok.t + i;
         if(t->parent == array_tok.index)
         {
             if(index > 0)

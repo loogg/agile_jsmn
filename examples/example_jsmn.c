@@ -29,75 +29,69 @@ int main(void)
     fclose(fp);
     js[nFileLen] = 0;
 
-    int result = 0;
-    jsmn_parser parser;
-    jsmn_init(&parser);
-    jsmntok_t t[100] = {0};
-    int len = jsmn_parse(&parser, js, strlen(js), t, sizeof(t) / sizeof(t[0]));
-    if(len <= 0)
+    do
     {
-        LOG_E("parse error.");
-        result = -1;
-        goto _exit;
-    }
-
-    jsmn_item_t root;
-    JSMN_ItemInit(&root, t, 0, len);
-
-    int root_array_size = JSMN_GetArraySize(&root);
-    if(root_array_size < 0)
-    {
-        LOG_E("root array error. (size:%d)", root_array_size);
-        result = -1;
-        goto _exit;
-    }
-
-    for (int i = 0; i < root_array_size; i++)
-    {
-        jsmn_item_t root_array_item;
-        JSMN_GetArrayItem(&root, i, &root_array_item);
-        
-        jsmn_item_t root_array_item_a;
-        if(JSMN_GetObjectItem(js, &root_array_item, "a", &root_array_item_a) != 0)
+        jsmn_parser parser;
+        jsmn_init(&parser);
+        jsmntok_t tokens[100] = {0};
+        int tokens_len = jsmn_parse(&parser, js, strlen(js), tokens, sizeof(tokens) / sizeof(tokens[0]));
+        if(tokens_len <= 0)
+            break;
+        jsmn_item_t root;
+        JSMN_ItemInit(&root, tokens, 0, tokens_len);
+        int root_array_size = JSMN_GetArraySize(&root);
+        if(root_array_size < 0)
+            break;
+        for (int i = 0; i < root_array_size; i++)
         {
-            result = -1;
-            goto _exit;
-        }
-
-        LOG_I("get root array index:%d--->\"a\":%s", i, JSMN_GetValueString(js, &root_array_item_a));
-
-        jsmn_item_t b_array;
-        if(JSMN_GetObjectItem(js, &root_array_item, "b", &b_array) != 0)
-        {
-            result = -1;
-            goto _exit;
-        }
-
-        int b_array_size = JSMN_GetArraySize(&b_array);
-        if(b_array_size < 0)
-        {
-            result = -1;
-            goto _exit;
-        }
-
-        for (int j = 0; j < b_array_size; j++)
-        {
-            jsmn_item_t b_array_item;
-            JSMN_GetArrayItem(&b_array, j, &b_array_item);
+            jsmn_item_t root_ob_item;
+            if(JSMN_GetArrayItem(&root, i, &root_ob_item) != 0)
+                continue;
             
-            jsmn_item_t b_array_item_a;
-            if(JSMN_GetObjectItem(js, &b_array_item, "a", &b_array_item_a) != 0)
+            jsmn_item_t root_ob_a_item;
+            jsmn_item_t root_ob_b_item;
+            if(JSMN_GetObjectItem(js, &root_ob_item, "a", &root_ob_a_item) != 0)
+                continue;
+            if(JSMN_GetObjectItem(js, &root_ob_item, "b", &root_ob_b_item) != 0)
+                continue;
+            
+            char *item_string = JSMN_GetValueString(js, &root_ob_a_item);
+            if(item_string == NULL)
+                continue;
+            
+            LOG_I("get root array index:%d--->\"%s\":%s", i, JSMN_GetString(js, &root_ob_a_item), item_string);
+
+            int b_array_size = JSMN_GetArraySize(&root_ob_b_item);
+            if(b_array_size < 0)
+                continue;
+
+            for (int j = 0; j < b_array_size; j++)
             {
-                result = -1;
-                goto _exit;
+                jsmn_item_t b_ob_item;
+                if(JSMN_GetArrayItem(&root_ob_b_item, j, &b_ob_item) != 0)
+                    continue;
+                
+                jsmn_item_t b_ob_a_item;
+                if(JSMN_GetObjectItem(js, &b_ob_item, "a", &b_ob_a_item) != 0)
+                    continue;
+                
+                jsmn_item_t b_ob_a_value_item;
+                jsmn_item_t b_ob_a_name_item;
+                if(JSMN_GetObjectItem(js, &b_ob_a_item, "value", &b_ob_a_value_item) != 0)
+                    continue;
+                if(JSMN_GetObjectItem(js, &b_ob_a_item, "name", &b_ob_a_name_item) != 0)
+                    continue;
+
+
+                LOG_I("get root array index:%d--->\"%s\" array index:%d--->\"%s\":%s, \"%s\":%s", i, JSMN_GetString(js, &root_ob_b_item),
+                j, JSMN_GetString(js, &b_ob_a_value_item), JSMN_GetValueString(js, &b_ob_a_value_item), JSMN_GetString(js, &b_ob_a_name_item),
+                JSMN_GetValueString(js ,&b_ob_a_name_item));
             }
-
-            LOG_I("get root array index:%d--->\"b\" array index:%d--->\"a\":%s", i, j, JSMN_GetValueString(js, &b_array_item_a));
         }
-    }
+    }while(0);
 
-_exit:
+
     free(js);
     getchar();
-    return result;
+    return 0;
 }
