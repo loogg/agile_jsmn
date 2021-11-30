@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "intelliSenseMode": "clang-x64",
+            "name": "Win32",
+            "cppStandard": "c++11",
+            "cStandard": "c99",
+            "compilerPath": "D:/RT-Thread/env/tools/gnu_gcc/arm_gcc/mingw/bin/arm-none-eabi-gcc",
+            "includePath": [
+                "C:/Users/longwei.ma/Desktop/test",
+                "C:/Users/longwei.ma/Desktop/test/applications",
+                "C:/Users/longwei.ma/Desktop/test/board",
+                "C:/Users/longwei.ma/Desktop/test/board/CubeMX_Config/Inc",
+                "C:/Users/longwei.ma/Desktop/test/board/ports",
+                "C:/Users/longwei.ma/Desktop/test/libraries/HAL_Drivers",
+                "C:/Users/longwei.ma/Desktop/test/libraries/HAL_Drivers/config",
+                "C:/Users/longwei.ma/Desktop/test/libraries/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Include",
+                "C:/Users/longwei.ma/Desktop/test/libraries/STM32F1xx_HAL/CMSIS/Include",
+                "C:/Users/longwei.ma/Desktop/test/libraries/STM32F1xx_HAL/STM32F1xx_HAL_Driver/Inc",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_button-latest/examples",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_button-latest/inc",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_jsmn-latest/jsmn-1.0.0",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_jsmn-latest/util",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_led-v1.1.0/examples",
+                "C:/Users/longwei.ma/Desktop/test/packages/agile_led-v1.1.0/inc",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/components/drivers/include",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/components/finsh",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/components/libc/compilers/common",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/components/libc/compilers/gcc/newlib",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/include",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/libcpu/arm/common",
+                "C:/Users/longwei.ma/Desktop/test/rt-thread/libcpu/arm/cortex-m3"
+            ],
+            "defines": [
+                "HAVE_CCONFIG_H",
+                "JSMN_PARENT_LINKS",
+                "RT_USING_NEWLIB",
+                "STM32F103xE",
+                "USE_HAL_DRIVER",
+                "__RTTHREAD__"
+            ]
+        }
+    ],
+    "version": 4
+}
