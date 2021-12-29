@@ -38,7 +38,7 @@ PROJECT_NAME           = "Agile Jsmn"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 1.0.0
+PROJECT_NUMBER         = 1.0.1
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -960,7 +960,10 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = ../../examples
+EXCLUDE                = ../../examples/dbg_log.h \
+                         ../../examples/example_jsmn.c \
+                         ../../examples/example.json \
+                         ../../examples/Makefile
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1456,7 +1459,7 @@ CHM_FILE               = ../Agile_Jsmn.chm
 # The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-HHC_LOCATION           = "D:/Doxygen/HTML Help Workshop/hhc.exe"
+HHC_LOCATION           = "E:/Doxygen/htmlhelpworkshop/HTML Help Workshop/hhc.exe"
 
 # The GENERATE_CHI flag controls if a separate .chi index file is generated
 # (YES) or that it should be included in the main .chm file (NO).
@@ -2580,7 +2583,7 @@ INTERACTIVE_SVG        = NO
 # found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_PATH               = D:/Doxygen/Graphviz/bin
+DOT_PATH               = E:/Doxygen/Graphviz/bin
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the \dotfile

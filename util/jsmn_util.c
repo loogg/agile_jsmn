@@ -2,8 +2,20 @@
  * @file    jsmn_util.c
  * @brief   Agile Jsmn 软件包源文件
  * @author  马龙伟 (2544047213@qq.com)
- * @version 1.0.0
- * @date    2021-11-30
+ * @version 1.0.1
+ * @date    2021-12-29
+ *
+ @verbatim
+    使用：
+    - jsmn_init 初始化 jsmn 解析器
+    - 使用 jsmn_parse 将 json 数据解析到 jsmntok_t 数组中
+    - JSMN_ItemInit 初始化根节点
+    - 调用相应 API 获取自己想要的 json 对象
+    - 值返回的是字符串
+      如果值是整数或浮点数，需要自己使用 atoi 或 atof 转换
+      如果需要判断值是不是 null，需要对字符串进行 strstr / strcmp 判断
+
+ @endverbatim
  *
  * @attention
  *
@@ -24,9 +36,7 @@
  * @param   js json 字符串
  * @param   t token 对象
  * @param   s 要比较的字符串
- * @return
- * - 1:相同
- * - 0:不同
+ * @return  1:相同; 0:不同
  */
 static int json_token_streq(const char *js, jsmntok_t *t, const char *const s)
 {
@@ -61,9 +71,7 @@ void JSMN_ItemInit(jsmn_item_t *item, jsmntok_t *t, int index, int tokens_len)
  * @param   object object 对象
  * @param   string key 字符串
  * @param   item 存放的 Agile Jsmn 对象指针
- * @return
- * - 0:成功
- * - !=0:异常
+ * @return  0:成功; !=0:异常
  */
 int JSMN_GetObjectItem(const char *js, jsmn_item_t *object, const char *const string, jsmn_item_t *item)
 {
@@ -122,9 +130,7 @@ int JSMN_GetObjectItem(const char *js, jsmn_item_t *object, const char *const st
  * @endcode
  * @param   js json 字符串
  * @param   item Agile Jsmn 对象
- * @return
- * - !=NULL:字符串
- * - =NULL:异常
+ * @return  !=NULL:字符串; =NULL:异常
  */
 char *JSMN_GetString(char *js, jsmn_item_t *item)
 {
@@ -145,9 +151,7 @@ char *JSMN_GetString(char *js, jsmn_item_t *item)
  * @param   item Agile Jsmn 对象
  * @param   buf 存储内存
  * @param   bufsz 存储内存大小
- * @return
- * - >=0:字符串长度
- * - 其他:异常
+ * @return  >=0:字符串长度; 其他:异常
  */
 int JSMN_GetStringBuffered(const char *js, jsmn_item_t *item, char *buf, int bufsz)
 {
@@ -174,9 +178,7 @@ int JSMN_GetStringBuffered(const char *js, jsmn_item_t *item, char *buf, int buf
  * @see     value 值参见 JSMN_GetString
  * @param   js json 字符串
  * @param   item Agile Jsmn 对象
- * @return
- * - !=NULL:值字符串
- * - =NULL:异常
+ * @return  !=NULL:值字符串; =NULL:异常
  */
 char *JSMN_GetValueString(char *js, jsmn_item_t *item)
 {
@@ -201,9 +203,7 @@ char *JSMN_GetValueString(char *js, jsmn_item_t *item)
  * @param   item Agile Jsmn 对象
  * @param   buf 存储内存
  * @param   bufsz 存储内存大小
- * @return
- * - >=0:字符串长度
- * - 其他:异常
+ * @return  >=0:字符串长度; 其他:异常
  */
 int JSMN_GetValueStringBuffered(const char *js, jsmn_item_t *item, char *buf, int bufsz)
 {
@@ -224,9 +224,7 @@ int JSMN_GetValueStringBuffered(const char *js, jsmn_item_t *item, char *buf, in
 /**
  * @brief   获取 json 数组成员数目
  * @param   array Agile Jsmn 数组类型对象
- * @return
- * - >=0:数组成员数目
- * - 其他:异常
+ * @return  >=0:数组成员数目; 其他:异常
  */
 int JSMN_GetArraySize(jsmn_item_t *array)
 {
@@ -251,9 +249,7 @@ int JSMN_GetArraySize(jsmn_item_t *array)
  * @param   array Agile Jsmn 数组类型对象
  * @param   index 索引
  * @param   item 存放的 Agile Jsmn 对象指针
- * @return
- * - =0:成功
- * - !=0:异常
+ * @return  =0:成功; !=0:异常
  */
 int JSMN_GetArrayItem(jsmn_item_t *array, int index, jsmn_item_t *item)
 {
